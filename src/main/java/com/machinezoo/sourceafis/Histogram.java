@@ -18,6 +18,7 @@ class Histogram {
 		this(size.x, size.y, depth);
 	}
 	int constrain(int z) {
+		// range내의 정수를 구한다.
 		return Math.max(0, Math.min(depth - 1, z));
 	}
 	int get(int x, int y, int z) {
@@ -48,6 +49,7 @@ class Histogram {
 		add(at.x, at.y, z, value);
 	}
 	void increment(int x, int y, int z) {
+		// 해당 블록의 histogram값을 1증가
 		add(x, y, z, 1);
 	}
 	void increment(Cell at, int z) {

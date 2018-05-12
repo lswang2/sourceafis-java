@@ -63,15 +63,24 @@ public class FingerprintMatcher {
 		return this;
 	}
 	private TIntObjectHashMap<List<IndexedEdge>> buildEdgeHash(ImmutableTemplate template) {
+		// 모든 minutia pare(edge)에 대해 해시를 생성한다
+		// 검색edge의 해시로 검색하면
+		// 해당 edge와 근접한 모든 edge의 리스트가 불려나온다.
 		TIntObjectHashMap<List<IndexedEdge>> map = new TIntObjectHashMap<>();
 		for (int reference = 0; reference < template.minutiae.length; ++reference)
 			for (int neighbor = 0; neighbor < template.minutiae.length; ++neighbor)
 				if (reference != neighbor) {
+					// 모든 minutia 페어에 대하여 IndexedEdge를 만들고
 					IndexedEdge edge = new IndexedEdge(template.minutiae, reference, neighbor);
 					for (int hash : shapeCoverage(edge)) {
+						// 그 Edge의 오차범위를 모두 커버하는 데이터에 대해 해시를 생성하여
+						// 기존 map에서 해시를 가져와서
 						List<IndexedEdge> list = map.get(hash);
+						// 기존에 그 값에 대해 해시가 없으면
 						if (list == null)
+							// 맵에 새로 리시트를 생성하여 추가하고
 							map.put(hash, list = new ArrayList<>());
+						// 해당 리스트에 엣지를 추가한다.
 						list.add(edge);
 					}
 				}
@@ -79,6 +88,7 @@ public class FingerprintMatcher {
 		return map;
 	}
 	private List<Integer> shapeCoverage(EdgeShape edge) {
+		// 오차범위를 고려하여 모든 가능한 해시값을 생성하여 그것을 리스트로 만들어 리턴한다.
 		int minLengthBin = (edge.length - Parameters.maxDistanceError) / Parameters.maxDistanceError;
 		int maxLengthBin = (edge.length + Parameters.maxDistanceError) / Parameters.maxDistanceError;
 		int angleBins = (int)Math.ceil(2 * Math.PI / Parameters.maxAngleError);

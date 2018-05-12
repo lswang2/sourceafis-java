@@ -8,6 +8,7 @@ import com.machinezoo.noexception.*;
 import gnu.trove.map.hash.*;
 
 class IndexedEdge extends EdgeShape {
+	// EdgeShape에 사용된 두개의 미누셔의 인덱스를 포함함
 	final int reference;
 	final int neighbor;
 	IndexedEdge(Minutia[] minutiae, int reference, int neighbor) {

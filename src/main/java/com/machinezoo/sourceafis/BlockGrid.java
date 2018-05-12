@@ -2,6 +2,7 @@
 package com.machinezoo.sourceafis;
 
 class BlockGrid {
+	// 입력 x,y크기의 block들의 나열
 	final Cell blocks;
 	final Cell corners;
 	final int[] x;
