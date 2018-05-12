@@ -71,10 +71,13 @@ class TemplateBuilder {
 		Skeleton ridges = new Skeleton(binary, SkeletonType.RIDGES, transparency);
 		Skeleton valleys = new Skeleton(inverted, SkeletonType.VALLEYS, transparency);
 
+		// 미누셔를 나열하고 방향을 계산한다.
+		// minutiae에 누적한다.
 		collectMinutiae(ridges, MinutiaType.ENDING);
 		collectMinutiae(valleys, MinutiaType.BIFURCATION);
 
 		//transparency.logSkeletonMinutiae(this);
+		// 미누셔가 지문이 없는 영역으로 나가면 제외한다.
 		maskMinutiae(innerMask);
 		removeMinutiaClouds();
 		limitTemplateSize();
@@ -794,6 +797,8 @@ class TemplateBuilder {
 		return shrunk;
 	}
 	private void collectMinutiae(Skeleton skeleton, MinutiaType type) {
+		// 모든 미누셔에 대해 ending만 취하고
+		// 각각에서 21번째 리지픽셀의 방향을 미누셔의 방향으로 정한다.
 		minutiae = Stream.concat(
 			Arrays.stream(Optional.ofNullable(minutiae).orElse(new Minutia[0])),
 			skeleton.minutiae.stream()
@@ -802,6 +807,7 @@ class TemplateBuilder {
 			.toArray(Minutia[]::new);
 	}
 	private void maskMinutiae(BooleanMap mask) {
+		// 미누셔의 벡터가 지문이 없는 영역으로 나가면 제외한다.
 		minutiae = Arrays.stream(minutiae)
 			.filter(minutia -> {
 				Cell arrow = Angle.toVector(minutia.direction).multiply(-Parameters.maskDisplacement).round();

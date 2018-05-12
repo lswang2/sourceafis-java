@@ -356,11 +356,15 @@ class Skeleton {
 						queue.add(gap);
 					}
 		BooleanMap shadow = shadow();
+		// 갭이 존재하면
 		while (!queue.isEmpty()) {
+			// 갭하나를 선택하여
 			Gap gap = queue.remove();
+			// 갭에 포함된 두 리지가 모두 엔딩이면
 			if (gap.end1.ridges.size() == 1 && gap.end2.ridges.size() == 1) {
 				Cell[] line = gap.end1.position.lineTo(gap.end2.position);
 				if (!isRidgeOverlapping(line, shadow))
+					// 두개의 갭을 연결한다.
 					addGapRidge(shadow, gap, line);
 			}
 		}
@@ -372,20 +376,25 @@ class Skeleton {
 		// 두개의 미누셔가 가까우면
 		if (distanceSq <= Integers.sq(Parameters.maxRuptureSize))
 			return true;
+		// 충분히 멀면 
 		if (distanceSq > Integers.sq(Parameters.maxGapSize))
 			return false;
-		// 
+		// 갭간의 각도를 계산하고
 		double gapDirection = Angle.atan(end1.position, end2.position);
+		// 리지를 따라가 끝점이나 22번째 점까지의 각도를 계산
 		double direction1 = Angle.atan(end1.position, angleSampleForGapRemoval(end1));
+		// 45도보다 크면 리젝트
 		if (Angle.distance(direction1, Angle.opposite(gapDirection)) > Parameters.maxGapAngle)
 			return false;
 		double direction2 = Angle.atan(end2.position, angleSampleForGapRemoval(end2));
+		// 45도보다 크면 리젝트
 		if (Angle.distance(direction2, gapDirection) > Parameters.maxGapAngle)
 			return false;
 		return true;
 	}
 	private Cell angleSampleForGapRemoval(SkeletonMinutia minutia) {
 		SkeletonRidge ridge = minutia.ridges.get(0);
+		// 22번째 리지 점 또는 마지막 점 중 가까운 것을 선택
 		if (Parameters.gapAngleOffset < ridge.points.size())
 			return ridge.points.get(Parameters.gapAngleOffset);
 		else
